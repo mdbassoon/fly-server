@@ -1,0 +1,8 @@
+     misc_feature    *featureLoc*
+                     /locus_tag="*featureName*"
+                     /label="*featureName*"
+                     /ApEinfo_label="*featureName*"
+                     /ApEinfo_fwdcolor="*featureColor*"
+                     /ApEinfo_revcolor="green"
+                     /ApEinfo_graphicformat="arrow_data {{0 1 2 0 0 -1} {} 0}
+                     width 5 offset 0"

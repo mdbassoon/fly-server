@@ -1,0 +1,14 @@
+LOCUS       *name*        *length* bp ds-DNA     linear       *date*
+DEFINITION  .
+ACCESSION   
+VERSION     
+SOURCE      .
+  ORGANISM  .
+COMMENT     
+COMMENT     
+COMMENT     
+FEATURES             Location/Qualifiers
+*FEATURES*
+ORIGIN
+*GENE*
+//
