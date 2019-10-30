@@ -13,7 +13,7 @@ var http = require('http');
  */
 
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
 var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 /**
  * Create HTTP server.
@@ -55,7 +55,9 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
-    throw error;
+    console.log(error);
+    throw 'error';
+
   }
 
   var bind = typeof port === 'string'
@@ -73,7 +75,8 @@ function onError(error) {
       process.exit(1);
       break;
     default:
-      throw error;
+      console.log(error);
+      throw 'error';
   }
 }
 

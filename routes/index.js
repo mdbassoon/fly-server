@@ -8,7 +8,9 @@ var nightmare = require('../nightmareTools.js');
 //Public Directories
 /* GET home page. */
 router.get('/', (req, res)=>{
-  res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
+  res.status(404);
+  res.send('404 Not Found')
+//  res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
 })
 .get('/api', async (req,res)=>{
 
@@ -38,6 +40,7 @@ router.get('/', (req, res)=>{
     console.log('primer input: ',JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
     response = await nightmare.getPrimers(JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
   }
+  console.log(response)
   res.json(response);
 });
 
