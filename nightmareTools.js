@@ -27,12 +27,12 @@ async function searchForGene(gene) {
     const geneName = !res['jbrowseUrl']?'':res['geneName'];
     return {fastaUrl:fastaUrl,jbrowseUrl:jbrowseUrl,geneTitle:geneName};
   }catch(error) {
-    console.log(error);
+    // console.log(error);
     return error;
   }
 }
 async function getMoreBases(url) {
-  console.log('getting bases');
+  // console.log('getting bases');
   try {
     let nightmare = Nightmare({show: false}); 
     let geneInfo = await nightmare.goto(url).end().evaluate(()=>{
@@ -79,8 +79,8 @@ async function getMoreBases(url) {
       } else if(isBlue) {
 
         if(fullGene[start] === fullGene[start].toUpperCase()){//If it's blue and first letters uppercase, it's a UTR
-        console.log('UTR: ');
-        console.log('multiple sections?: ',section.match(/[a-z]/g, "")?true:false);
+        // console.log('UTR: ');
+        // console.log('multiple sections?: ',section.match(/[a-z]/g, "")?true:false);
 
           if(section.match(/[a-z]/g, "")){//if there is a lowercase section within this section, separate it out as a genespan. Multiple alternating sections possible.
             let lowerStarts = [0];
@@ -92,30 +92,30 @@ async function getMoreBases(url) {
                 upperStarts.push(y);
               }
             }
-            console.log(lowerStarts);
-            console.log(upperStarts);
-            console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
+            // console.log(lowerStarts);
+            // console.log(upperStarts);
+            // console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
             for(let y=0;y<lowerStarts.length;y++){
               if(!upperStarts[y]) {
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice(lowerStarts[y],section.length).join(''));
-                console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
+                // console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
               } else {
-                console.log('lowerStart y: ', lowerStarts[y]);
-                console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStart y: ', lowerStarts[y]);
+                // console.log('upperStarts y: ', upperStarts[y]);
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice( lowerStarts[y], upperStarts[y]).join(''));
-                console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
+                // console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
 
-                console.log('upperStarts y: ', upperStarts[y]);
-                console.log('lowerStarts y+1: ', lowerStarts[y+1]);
+                // console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStarts y+1: ', lowerStarts[y+1]);
                 
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''));
-                console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
+                // console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
               }
             }
           } else {
@@ -128,8 +128,8 @@ async function getMoreBases(url) {
           geneSections.push(section);*/
         } else {   //genespan
           
-          console.log('gene span: ');
-          console.log('multiple sections?: ',section.match(/[A-Z]/g, "")?true:false);
+          // console.log('gene span: ');
+          // console.log('multiple sections?: ',section.match(/[A-Z]/g, "")?true:false);
           if(section.match(/[A-Z]/g, "")){//if there is an uppercase section within this section, separate it out as a UTR. Multiple alternating sections possible.
             let lowerStarts = [0];
             let upperStarts = [section.search(/[A-Z]/g, "")];
@@ -140,29 +140,29 @@ async function getMoreBases(url) {
                 upperStarts.push(y);
               }
             }
-            console.log(lowerStarts);
-            console.log(upperStarts);
-            console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
+            // console.log(lowerStarts);
+            // console.log(upperStarts);
+            // console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
             for(let y=0;y<lowerStarts.length;y++){
               if(!upperStarts[y]) {
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice(lowerStarts[y],section.length).join(''));
-                console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
+                // console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
               } else {
-                console.log('lowerStart y: ', lowerStarts[y]);
-                console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStart y: ', lowerStarts[y]);
+                // console.log('upperStarts y: ', upperStarts[y]);
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice( lowerStarts[y], upperStarts[y]).join(''));
-                console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
+                // console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
 
-                console.log('upperStarts y: ', upperStarts[y]);
-                console.log('lowerStarts y+1: ', lowerStarts[y+1]);
+                // console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStarts y+1: ', lowerStarts[y+1]);
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''));
-                console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
+                // console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
               }
             }
           } else {
@@ -189,7 +189,7 @@ async function getMoreBases(url) {
       pre:pre,
     };
   } catch(error) {
-    console.log(error);
+    // console.log(error);
     return error;
   } 
 }
@@ -240,8 +240,8 @@ async function getGeneInfo(url) {
       } else if(isBlue) {
 
         if(fullGene[start] === fullGene[start].toUpperCase()){//If it's blue and first letters uppercase, it's a UTR
-        console.log('UTR: ');
-        console.log('multiple sections?: ',section.match(/[a-z]/g, "")?true:false);
+        // console.log('UTR: ');
+        // console.log('multiple sections?: ',section.match(/[a-z]/g, "")?true:false);
 
           if(section.match(/[a-z]/g, "")){//if there is a lowercase section within this section, separate it out as a genespan. Multiple alternating sections possible.
             let lowerStarts = [0];
@@ -253,30 +253,30 @@ async function getGeneInfo(url) {
                 upperStarts.push(y);
               }
             }
-            console.log(lowerStarts);
-            console.log(upperStarts);
-            console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
+            // console.log(lowerStarts);
+            // console.log(upperStarts);
+            // console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
             for(let y=0;y<lowerStarts.length;y++){
               if(!upperStarts[y]) {
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice(lowerStarts[y],section.length).join(''));
-                console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
+                // console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
               } else {
-                console.log('lowerStart y: ', lowerStarts[y]);
-                console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStart y: ', lowerStarts[y]);
+                // console.log('upperStarts y: ', upperStarts[y]);
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice( lowerStarts[y], upperStarts[y]).join(''));
-                console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
+                // console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
 
-                console.log('upperStarts y: ', upperStarts[y]);
-                console.log('lowerStarts y+1: ', lowerStarts[y+1]);
+                // console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStarts y+1: ', lowerStarts[y+1]);
                 
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''));
-                console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
+                // console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
               }
             }
           } else {
@@ -289,8 +289,8 @@ async function getGeneInfo(url) {
           geneSections.push(section);*/
         } else {   //genespan
           
-          console.log('gene span: ');
-          console.log('multiple sections?: ',section.match(/[A-Z]/g, "")?true:false);
+          // console.log('gene span: ');
+          // console.log('multiple sections?: ',section.match(/[A-Z]/g, "")?true:false);
           if(section.match(/[A-Z]/g, "")){//if there is an uppercase section within this section, separate it out as a UTR. Multiple alternating sections possible.
             let lowerStarts = [0];
             let upperStarts = [section.search(/[A-Z]/g, "")];
@@ -301,29 +301,29 @@ async function getGeneInfo(url) {
                 upperStarts.push(y);
               }
             }
-            console.log(lowerStarts);
-            console.log(upperStarts);
-            console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
+            // console.log(lowerStarts);
+            // console.log(upperStarts);
+            // console.log('total sections: ',lowerStarts.length>upperStarts.length?(lowerStarts.length*2)-1:lowerStarts.length*2);
             for(let y=0;y<lowerStarts.length;y++){
               if(!upperStarts[y]) {
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice(lowerStarts[y],section.length).join(''));
-                console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
+                // console.log(y+': ', section.split('').slice(lowerStarts[y],section.length).join(''));
               } else {
-                console.log('lowerStart y: ', lowerStarts[y]);
-                console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStart y: ', lowerStarts[y]);
+                // console.log('upperStarts y: ', upperStarts[y]);
                 geneColors.push('rgb(8,7,8)');
                 sectionNames.push('geneSpan');
                 geneSections.push(section.split('').slice( lowerStarts[y], upperStarts[y]).join(''));
-                console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
+                // console.log(y, section.split('').slice(lowerStarts[y], upperStarts[y]).join(''));
 
-                console.log('upperStarts y: ', upperStarts[y]);
-                console.log('lowerStarts y+1: ', lowerStarts[y+1]);
+                // console.log('upperStarts y: ', upperStarts[y]);
+                // console.log('lowerStarts y+1: ', lowerStarts[y+1]);
                 geneColors.push('rgb(19,111,99)');
                 sectionNames.push('UTR');
                 geneSections.push(section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''));
-                console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
+                // console.log(y+': ',section.split('').slice(upperStarts[y], !lowerStarts[y+1]?section.length:lowerStarts[y+1]).join(''))
               }
             }
           } else {
@@ -350,12 +350,12 @@ async function getGeneInfo(url) {
       pre:pre,
     };
   } catch(error) {
-    console.log(error);
+    // console.log(error);
     return error;
   }   
 }
 async function searchForTargets(targetArea) {
-  console.log('target area: ',targetArea)
+  // console.log('target area: ',targetArea)
     try {
       const url = 'http://targetfinder.flycrispr.neuro.brown.edu/';
       let nightmare = Nightmare({show: false});
@@ -393,7 +393,7 @@ async function searchForTargets(targetArea) {
         }
         return resultsArr;
       });  
-      console.log('res: ',res);
+      // console.log('res: ',res);
       if(!Array.isArray(res) || !res.length || error) {
         return {'error':'No Targets Found'};
       } else {
@@ -531,7 +531,7 @@ async function getPrimers(primerSections) {
         primers['hom3'] = allPrimers; 
       }
     } catch(error) {
-      console.log(error);
+      // console.log(error);
       return error;
     }
   }
