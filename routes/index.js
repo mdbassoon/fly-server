@@ -16,7 +16,7 @@ router.get('/', (req, res)=>{
 
   res.header("Access-Control-Allow-Origin", "*");
   let response = {'error':'no valid query'}
-  if(req.query){// console.log(req.query);}
+  if(req.query){/*console.log(req.query);*/}
   if(req.query.type === 'search'){
     //Get Name
     response = await nightmare.searchForGene(req.query.gene);
