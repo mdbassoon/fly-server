@@ -2,6 +2,7 @@ const Nightmare = require('nightmare');
 async function searchForGene(gene) {
   try{
     const nightmare = Nightmare({ show: false });
+    console.log('initiated');
     let res = await nightmare
     .goto('https://flybase.org')
     .wait('#GeneSearch')
@@ -22,6 +23,7 @@ async function searchForGene(gene) {
       }
       return obj;
     });
+    console.log('response',res);
     const fastaUrl = !res['fastaUrl']?'':res['fastaUrl'];
     const jbrowseUrl = !res['jbrowseUrl']?'':res['jbrowseUrl'];
     const geneName = !res['jbrowseUrl']?'':res['geneName'];
