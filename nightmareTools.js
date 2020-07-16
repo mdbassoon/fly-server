@@ -22,7 +22,7 @@ async function searchForGene(gene) {
         'geneName':geneName
       }
       return obj;
-    });
+    }).catch(err=>console.log(err));
     console.log('response',res);
     const fastaUrl = !res['fastaUrl']?'':res['fastaUrl'];
     const jbrowseUrl = !res['jbrowseUrl']?'':res['jbrowseUrl'];
