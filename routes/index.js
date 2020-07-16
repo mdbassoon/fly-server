@@ -6,7 +6,8 @@ var app = express();
 var nightmare = require('../nightmareTools.js');
 
 //Public Directories
-app.use('/static', express.static(path.join(__dirname, '../public/build/static')))
+app.use('/static/css', express.static(path.join(__dirname, '../public/build/static/css')));
+app.use('/static/js', express.static(path.join(__dirname, '../public/build/static/js')))
 /* GET home page. */
 router.get('/', (req, res)=>{
   res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
