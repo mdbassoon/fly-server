@@ -8,12 +8,14 @@ var nightmare = require('../nightmareTools.js');
 //Public Directories
 /* GET home page. */
 router.get('/', (req, res)=>{
-  res.status(404);
-  res.send('404 Not Found')
-//  res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
 })
 .get('/api', async (req,res)=>{
-
+  if(req.query&&req.query.type==='new'){
+    res.json(['you did it']);
+    res.end();
+    return null;
+  }
   res.header("Access-Control-Allow-Origin", "*");
   let response = {'error':'no valid query'}
   if(req.query){/*console.log(req.query);*/}
@@ -42,6 +44,10 @@ router.get('/', (req, res)=>{
   }
   // console.log(response)
   res.json(response);
+  res.end();
+  const used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+  return;
 });
 
 module.exports = router;

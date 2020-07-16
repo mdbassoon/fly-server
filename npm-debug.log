@@ -1,0 +1,32 @@
+0 info it worked if it ends with ok
+1 verbose cli [
+1 verbose cli   'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Users\\markd\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'start'
+1 verbose cli ]
+2 info using npm@3.10.10
+3 info using node@v12.16.3
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info lifecycle fly-server@0.0.0~prestart: fly-server@0.0.0
+6 silly lifecycle fly-server@0.0.0~prestart: no script for prestart, continuing
+7 info lifecycle fly-server@0.0.0~start: fly-server@0.0.0
+8 verbose lifecycle fly-server@0.0.0~start: unsafe-perm in lifecycle true
+9 verbose lifecycle fly-server@0.0.0~start: PATH: C:\Users\markd\AppData\Roaming\npm\node_modules\npm\bin\node-gyp-bin;C:\Users\markd\Desktop\Code\fly_server\node_modules\.bin;C:\Python38\Scripts\;C:\Python38\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\nodejs\;C:\Users\markd\AppData\Local\Microsoft\WindowsApps;;C:\Users\markd\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\markd\AppData\Roaming\npm
+10 verbose lifecycle fly-server@0.0.0~start: CWD: C:\Users\markd\Desktop\Code\fly_server
+11 silly lifecycle fly-server@0.0.0~start: Args: [ '/d /s /c', 'node ./bin/www' ]
+12 verbose stack Error: kill ENOSYS
+12 verbose stack     at process.kill (internal/process/per_thread.js:197:13)
+12 verbose stack     at process.listener (C:\Users\markd\AppData\Roaming\npm\node_modules\npm\node_modules\npmlog\node_modules\gauge\node_modules\signal-exit\index.js:86:15)
+12 verbose stack     at process.emit (events.js:322:22)
+13 verbose cwd C:\Users\markd\Desktop\Code\fly_server
+14 error Windows_NT 10.0.18362
+15 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Users\\markd\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js" "start"
+16 error node v12.16.3
+17 error npm  v3.10.10
+18 error code ENOSYS
+19 error errno ENOSYS
+20 error syscall kill
+21 error kill ENOSYS
+22 error If you need help, you may report this error at:
+22 error     <https://github.com/npm/npm/issues>
+23 verbose exit [ 1, true ]
