@@ -19,7 +19,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public/')));
 
 app.use('/', indexRouter);
-
+//Public Directories
+app.use('/css', express.static(path.join(__dirname, '/public/build/static/css')));
+app.use('/js', express.static(path.join(__dirname, '/public/build/static/js')));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
