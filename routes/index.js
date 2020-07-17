@@ -10,6 +10,7 @@ router.get('/', (req, res)=>{
   res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
 })
 .get('/api', async (req,res)=>{
+  req.socket.setTimeout(3600e3);
   if(req.query&&req.query.type==='new'){
     res.json(['you did it']);
     res.end();
