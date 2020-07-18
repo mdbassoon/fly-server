@@ -11,9 +11,7 @@ async function searchForGene(gene) {
     const nightmare = Nightmare({ show: false });
     console.log('initiated',nightmare);
     let res = await nightmare
-    .goto('https://flybase.org').then((gotoStatus) => {
-        console.log('goto',gotoStatus);
-    })
+    .goto('https://flybase.org')
     .wait('#GeneSearch')
     .insert('#GeneSearch', gene)
     .click('#GeneSearch_submit')
