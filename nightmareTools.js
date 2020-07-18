@@ -9,7 +9,6 @@ async function searchForGene(gene) {
     
 
     const nightmare = Nightmare({ show: false });
-    console.log('initiated',nightmare);
     let res = await nightmare
     .goto('https://flybase.org')
     .wait('#GeneSearch')
@@ -30,19 +29,18 @@ async function searchForGene(gene) {
       }
       return obj;
     }).catch(err=>console.log(err));
-    console.log('response',res);
+    //console.log('response',res);
     const fastaUrl = !res['fastaUrl']?'':res['fastaUrl'];
     const jbrowseUrl = !res['jbrowseUrl']?'':res['jbrowseUrl'];
     const geneName = !res['jbrowseUrl']?'':res['geneName'];
     xvfb.stopSync();
     return {fastaUrl:fastaUrl,jbrowseUrl:jbrowseUrl,geneTitle:geneName};
   }catch(error) {
-    // console.log(error);
+    //console.log(error);
     return error;
   }
 }
 async function getMoreBases(url) {
-  // console.log('getting bases');
   try {
     var xvfb = new Xvfb();
     xvfb.startSync();
