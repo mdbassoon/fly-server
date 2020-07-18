@@ -1,6 +1,13 @@
 const Nightmare = require('nightmare');
+var Xvfb = require('xvfb');
 async function searchForGene(gene) {
   try{
+    var xvfb = new Xvfb();
+    xvfb.startSync();
+ 
+    // code that uses the virtual frame buffer here
+    
+
     const nightmare = Nightmare({ show: false });
     console.log('initiated',nightmare);
     let res = await nightmare
@@ -29,6 +36,7 @@ async function searchForGene(gene) {
     const fastaUrl = !res['fastaUrl']?'':res['fastaUrl'];
     const jbrowseUrl = !res['jbrowseUrl']?'':res['jbrowseUrl'];
     const geneName = !res['jbrowseUrl']?'':res['geneName'];
+    xvfb.stopSync();
     return {fastaUrl:fastaUrl,jbrowseUrl:jbrowseUrl,geneTitle:geneName};
   }catch(error) {
     // console.log(error);
