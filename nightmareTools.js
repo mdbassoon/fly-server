@@ -44,6 +44,8 @@ async function searchForGene(gene) {
 async function getMoreBases(url) {
   // console.log('getting bases');
   try {
+    var xvfb = new Xvfb();
+    xvfb.startSync();
     let nightmare = Nightmare({show: false}); 
     let geneInfo = await nightmare.goto(url).end().evaluate(()=>{
       const genes = document.getElementsByClassName('col-xs-12')[2].children[0].children;
@@ -191,6 +193,7 @@ async function getMoreBases(url) {
         sectionNames.push('intergenic');
       }
     }
+    xvfb.stopSync();
     return {
       geneSections:geneSections,
       fullGene:geneInfo['fullGene'].slice(pre.length,geneInfo['fullGene'].length),
@@ -205,6 +208,8 @@ async function getMoreBases(url) {
 }
 async function getGeneInfo(url) {
   try {
+    var xvfb = new Xvfb();
+    xvfb.startSync();
     let nightmare = Nightmare({show: false}); 
     let geneInfo = await nightmare.goto(url).end().evaluate(()=>{
       const genes = document.getElementsByClassName('col-xs-12')[2].children[0].children;
@@ -352,6 +357,7 @@ async function getGeneInfo(url) {
         sectionNames.push('intergenic');
       }
     }
+    xvfb.stopSync();
     return {
       geneSections:geneSections,
       fullGene:geneInfo['fullGene'].slice(pre.length,geneInfo['fullGene'].length),
@@ -367,6 +373,8 @@ async function getGeneInfo(url) {
 async function searchForTargets(targetArea) {
   // console.log('target area: ',targetArea)
     try {
+      var xvfb = new Xvfb();
+      xvfb.startSync();
       const url = 'http://targetfinder.flycrispr.neuro.brown.edu/';
       let nightmare = Nightmare({show: false});
       let error = false;
@@ -404,6 +412,7 @@ async function searchForTargets(targetArea) {
         return resultsArr;
       });  
       // console.log('res: ',res);
+      xvfb.stopSync();
       if(!Array.isArray(res) || !res.length || error) {
         return {'error':'No Targets Found'};
       } else {
@@ -420,6 +429,8 @@ async function searchForTargets(targetArea) {
 async function checkTargetEfficiency(targets) {
   const url = 'http://www.flyrnai.org/evaluateCrispr/'
   try {
+    var xvfb = new Xvfb();
+    xvfb.startSync();
     let nightmare = Nightmare({show:false});
     const fullSearchString = targets.map((target)=>{
       const proximal = target.proximal;
@@ -441,6 +452,7 @@ async function checkTargetEfficiency(targets) {
       }
       return scores;
     });
+    xvfb.stopSync();
     if(!Array.isArray(scores) || !scores.length){
       return {'error':'scores not found'}
     } else {
@@ -455,6 +467,8 @@ async function checkTargetEfficiency(targets) {
 }
 async function getOligos(target) {
   try {
+    var xvfb = new Xvfb();
+    xvfb.startSync();
     const thisTarget = target.toString();
     let nightmare = Nightmare({show: false});
     const url = 'http://targetfinder.flycrispr.neuro.brown.edu/';
@@ -483,6 +497,7 @@ async function getOligos(target) {
       }
       return oligoText; 
     });  
+    xvfb.stopSync();
     if(!Array.isArray(res) || !res.length) {
       return {error:'error'}
     } else {
@@ -496,6 +511,8 @@ async function getPrimers(primerSections) {
   let primers = {};
   const url = 'http://bioinfo.ut.ee/primer3-0.4.0/';
   for(let i=0;i<4;i++){
+    var xvfb = new Xvfb();
+    xvfb.startSync();
     let currentPrimer = !primers['hom5']?"5' Homology":!primers['seq5']?"5' Sequence":!primers['seq3']?"3' Sequence":"3' Homology";
     let primerSection = primerSections[currentPrimer];
     let primerSide = currentPrimer==="3' Homology"?'input[name="MUST_XLATE_PICK_LEFT"]':currentPrimer==="3' Sequence"?'input[name="MUST_XLATE_PICK_LEFT"]':'input[name="MUST_XLATE_PICK_RIGHT"]';
@@ -512,6 +529,7 @@ async function getPrimers(primerSections) {
         const primers = document.querySelector('a[href="/primer3-0.4.0/primer3_www_results_help.html#PRIMER_OLIGO_SEQ"]').parentElement.innerText;
         return primers;
       });  
+      xvfb.stopSync();
       let primerStart = [];
       let stop = 0;
       let finalStop = 0;
