@@ -5,10 +5,7 @@ async function searchForGene(gene) {
     console.log('initiated',nightmare);
     let res = await nightmare
     .goto('https://flybase.org').then(gotoStatus => {
-      if (gotoStatus.code !== 200) {
-        console.log(gotoStatus);
-        return Promise.reject("HTTP error");
-      }
+        console.log('goto',gotoStatus);
     })
     .wait('#GeneSearch')
     .insert('#GeneSearch', gene)
