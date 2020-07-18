@@ -1,7 +1,7 @@
 const Nightmare = require('nightmare');
 async function searchForGene(gene) {
   try{
-    const nightmare = Nightmare({ show: false });
+    const nightmare = Nightmare({ show: true });
     console.log('initiated',nightmare);
     let res = await nightmare
     .goto('https://flybase.org').then((gotoStatus) => {
