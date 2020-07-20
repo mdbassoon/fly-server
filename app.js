@@ -23,6 +23,8 @@ app.use('/', indexRouter);
 app.use('/css', express.static(path.join(__dirname, '/public/build/static/css')));
 app.use('/js', express.static(path.join(__dirname, '/public/build/static/js')));
 app.use('/img', express.static(path.join(__dirname, '/public/build/img')));
+app.use('/fly_templates', express.static(path.join(__dirname, '/public/build/fly_templates')));
+app.use('/plasmid_folder', express.static(path.join(__dirname, '/public/build/plasmid_folder')));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
