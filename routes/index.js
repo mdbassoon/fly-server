@@ -4,7 +4,7 @@ var router = express.Router();
 var path = require('path');
 var app = express();
 var nightmare = require('../nightmareTools.js');
-
+var puppet = require('../puppeteer.js');
 /* GET home page. */
 router.get('/', (req, res)=>{
   res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
@@ -21,7 +21,7 @@ router.get('/', (req, res)=>{
   if(req.query){/*console.log(req.query);*/}
   if(req.query.type === 'search'){
     //Get Name
-    response = await nightmare.searchForGene(req.query.gene);
+    response = await puppet.searchForGene(req.query.gene);
   } else if(req.query.type === 'moreBases') {
     //Get Gene Info with Padding
     // console.log('base url: ',Buffer.from(req.query.url, 'base64').toString('ascii'));
@@ -48,6 +48,8 @@ router.get('/', (req, res)=>{
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
   return;
+}).get('/docs', (req, res)=>{
+  res.sendFile(path.join(__dirname, '../', 'public/api-docs/index.html'));
 });
 
 module.exports = router;

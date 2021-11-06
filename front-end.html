@@ -1,0 +1,90 @@
+<style>
+body {
+  padding:0;
+  margin:0;
+  font-family: Roboto;
+}
+.main {
+  display:flex;
+}
+.main .sidebar {
+  width:100%;
+  max-width:130px;
+}
+.main .content {
+  width:100%;
+  font-family: Roboto Mono;
+}
+
+header {
+  color:#fff;
+  background:#56409b;
+  width:100%;
+  display:flex;
+  justify-content: center;
+}
+
+header img {
+  object-fit:none;
+}
+header h1 {
+  max-width: 400px;
+  font-size: 66px;
+}
+header .logo {
+  margin-left:auto;
+}
+header .hamburger {
+ margin-left:auto;
+ margin-right:80px;
+}
+</style>
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<header>
+  <img class="logo"src="E:\vmshare\html\fly\fly-server\assets\logo-1.png" />
+  <h1>CrisprBuildr</h1>
+  <img class="hamburger"src="E:\vmshare\html\fly\fly-server\assets\hamburger-menu.png" />
+</header>
+<div class="main">
+  <div class="sidebar">
+    Something's here
+    <div>
+      <ul>
+        <li>
+          <img class="icon" />
+        </li>
+        <li>
+          <img class="icon" />
+        </li>
+          <img class="icon" />
+        <li>
+          <img class="icon" />
+        </li>
+          <img class="icon" />
+        <li>
+          <img class="icon" />
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="content">
+    <div></div>
+  </div>
+</div>
+<script>
+const test = () =>{
+  let icons = document.querySelectorAll(' .sidebar ul li');
+  for(let i=0;i<icons.length;i++){
+    let icon = icons[i];
+    console.log(icon);
+    icon.addEventListener('click',function(){
+      console.log('click');
+    });
+  }
+}
+test();
+</script>

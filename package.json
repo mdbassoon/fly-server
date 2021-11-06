@@ -13,7 +13,10 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
+    "mysql2": "^2.3.0",
+    "mysql2-promise": "^0.1.4",
     "nightmare": "^3.0.1",
+    "puppeteer": "^10.2.0",
     "xvfb": "^0.4.0"
   },
   "engines": {

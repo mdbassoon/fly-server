@@ -1,0 +1,509 @@
+<!--
+ API Documentation HTML Template  - 1.0.1
+ Copyright © 2016 Florian Nicolas
+ Licensed under the MIT license.
+ https://github.com/ticlekiwi/API-Documentation-HTML-Template
+ !-->
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>API - Documentation</title>
+    <meta name="description" content="">
+    <meta name="author" content="ticlekiwi">
+
+    <meta http-equiv="cleartype" content="on">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/api-docs/css/hightlightjs-dark.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,500|Source+Code+Pro:300" rel="stylesheet">
+    <link rel="stylesheet" href="/api-docs/css/style.css" media="all">
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="left-menu">
+    <div class="content-logo">
+        <img src="/api-docs/images/logo.png" height="32" />
+        <span>API Documentation</span>
+    </div>
+    <div class="content-menu">
+        <ul>
+            <li class="scroll-to-link active" data-target="get-started">
+                <a>GET STARTED</a>
+            </li>
+            <li class="scroll-to-link" data-target="gene-info">
+                <a>GENE</a>
+            </li>
+            <li class="scroll-to-link" data-target="target-info">
+                <a>TARGET</a>
+            </li>
+            <li class="scroll-to-link" data-target="oligo-info">
+                <a>OLIGOS</a>
+            </li>
+            <li class="scroll-to-link" data-target="primer-info">
+                <a>PRIMERS</a>
+            </li>
+            <li class="scroll-to-link" data-target="errors">
+                <a>Errors</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="content-page">
+    <div class="content-code"></div>
+    <div class="content">
+        <div class="overflow-hidden content-section" id="content-get-started">
+            <h1 id="get-started">Get started</h1>
+            <pre>
+    API Endpoint
+
+        https://crisprbuilder.org/api/
+                </pre>
+            <p>
+                Documentation for the CrisprBuilder API
+            </p>
+            <p>
+                To use this API, you need an <strong>API key</strong>. Please contact us at <a href="mailto:info@crisprbuilder.com">info@crisprbuilder.com</a> to get an API key.
+            </p>
+        </div>
+        <div class="overflow-hidden content-section" id="gene-info">
+            <h2 id="get-characters">GENE</h2>
+            <pre><code class="bash">
+# Here is a curl example
+curl \
+-X POST https://crisprbuilder.com/api/query \
+-F 'key=your_api_key' \
+-F 'type=gene,oligos,primers,primer_efficiency' \
+-F 'gene=pkn,polo' \
+                </code></pre>
+            <p>
+                To interact with our API, you need to make a GET request to the following url :<br>
+                <code class="higlighted">https://crisprbuilder.com/api/query</code>
+            </p>
+            <br>
+            <pre><code class="json">
+Result example :
+
+{
+  query: https://crisprbuilder.com/api?type=search&gene=polo
+  result: {
+    "id":12,
+    "name":"polo",
+    "isoForms":"[\"polo-RA\",\"polo-RB\"]",
+    "url":"https://flybase.org/download/sequence/FBgn0003124/gene_extended",
+    "sequence":"AAACAAAAGAGGCCACACGGCATTAGCGA...",
+    "isoForm":"polo-RA",
+    "time":"2021-09-06 13:42:23",
+    "isoFormSequence":"ATGGCCGCGAAGCCCGAGGATAAG..."
+  }
+}
+                </code></pre>
+            <h4>QUERY PARAMETERS</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>type</td>
+                    <td>String</td>
+                    <td>The type of api call you are making</td>
+                </tr>
+                <tr>
+                    <td>gene</td>
+                    <td>String</td>
+                    <td>A search word to find the gene information.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>(Optional) A search word to find information on a specific isoform by name.</td>
+                </tr>
+                </tbody>
+            </table><br>
+            <h4>RETURN VALUES</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>name</td>
+                    <td>String</td>
+                    <td>The search term you entered.</td>
+                </tr>
+                <tr>
+                    <td>isoForms</td>
+                    <td>String</td>
+                    <td>A list of isoforms associated with the gene.</td>
+                </tr>
+                <tr>
+                    <td>url</td>
+                    <td>String</td>
+                    <td>The flybase url from where this info was pulled.</td>
+                </tr>
+                <tr>
+                    <td>sequence</td>
+                    <td>String</td>
+                    <td>The extended gene sequence pulled from Flybase.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>The isoform returned from the query (will return default isoform from flybase is one is not queried).</td>
+                </tr>
+                <tr>
+                    <td>isoFormSequence</td>
+                    <td>String</td>
+                    <td>The full sequence of the isoform returned from the query.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overflow-hidden content-section" id="target-info">
+            <h2 id="get-characters">TARGET</h2>
+            <pre><code class="bash">
+# Here is a curl example
+curl \
+-X POST https://crisprbuilder.com/api/query \
+-F 'key=your_api_key' \
+-F 'type=gene,oligos,primers,primer_efficiency' \
+-F 'gene=pkn,polo' \
+                </code></pre>
+            <p>
+                To interact with our API, you need to make a GET request to the following url :<br>
+                <code class="higlighted">https://crisprbuilder.com/api/query</code>
+            </p>
+            <br>
+            <pre><code class="json">
+Result example :
+
+{
+  query: https://crisprbuilder.com/api?type=search&gene=polo
+  result: {
+    "id":12,
+    "name":"polo",
+    "isoForms":"[\"polo-RA\",\"polo-RB\"]",
+    "url":"https://flybase.org/download/sequence/FBgn0003124/gene_extended",
+    "sequence":"AAACAAAAGAGGCCACACGGCATTAGCGA...",
+    "isoForm":"polo-RA",
+    "time":"2021-09-06 13:42:23",
+    "isoFormSequence":"ATGGCCGCGAAGCCCGAGGATAAG..."
+  }
+}
+                </code></pre>
+            <h4>QUERY PARAMETERS</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>type</td>
+                    <td>String</td>
+                    <td>The type of api call you are making</td>
+                </tr>
+                <tr>
+                    <td>gene</td>
+                    <td>String</td>
+                    <td>A search word to find the gene information.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>(Optional) A search word to find information on a specific isoform by name.</td>
+                </tr>
+                </tbody>
+            </table><br>
+            <h4>RETURN VALUES</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>name</td>
+                    <td>String</td>
+                    <td>The search term you entered.</td>
+                </tr>
+                <tr>
+                    <td>isoForms</td>
+                    <td>String</td>
+                    <td>A list of isoforms associated with the gene.</td>
+                </tr>
+                <tr>
+                    <td>url</td>
+                    <td>String</td>
+                    <td>The flybase url from where this info was pulled.</td>
+                </tr>
+                <tr>
+                    <td>sequence</td>
+                    <td>String</td>
+                    <td>The extended gene sequence pulled from Flybase.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>The isoform returned from the query (will return default isoform from flybase is one is not queried).</td>
+                </tr>
+                <tr>
+                    <td>isoFormSequence</td>
+                    <td>String</td>
+                    <td>The full sequence of the isoform returned from the query.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overflow-hidden content-section" id="oligo-info">
+            <h2 id="get-characters">OLIGOS</h2>
+            <pre><code class="bash">
+# Here is a curl example
+curl \
+-X POST https://crisprbuilder.com/api/query \
+-F 'key=your_api_key' \
+-F 'type=gene,oligos,primers,primer_efficiency' \
+-F 'gene=pkn,polo' \
+                </code></pre>
+            <p>
+                To interact with our API, you need to make a GET request to the following url :<br>
+                <code class="higlighted">https://crisprbuilder.com/api/query</code>
+            </p>
+            <br>
+            <pre><code class="json">
+Result example :
+
+{
+  query: https://crisprbuilder.com/api?type=search&gene=polo
+  result: {
+    "id":12,
+    "name":"polo",
+    "isoForms":"[\"polo-RA\",\"polo-RB\"]",
+    "url":"https://flybase.org/download/sequence/FBgn0003124/gene_extended",
+    "sequence":"AAACAAAAGAGGCCACACGGCATTAGCGA...",
+    "isoForm":"polo-RA",
+    "time":"2021-09-06 13:42:23",
+    "isoFormSequence":"ATGGCCGCGAAGCCCGAGGATAAG..."
+  }
+}
+                </code></pre>
+            <h4>QUERY PARAMETERS</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>type</td>
+                    <td>String</td>
+                    <td>The type of api call you are making</td>
+                </tr>
+                <tr>
+                    <td>gene</td>
+                    <td>String</td>
+                    <td>A search word to find the gene information.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>(Optional) A search word to find information on a specific isoform by name.</td>
+                </tr>
+                </tbody>
+            </table><br>
+            <h4>RETURN VALUES</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>name</td>
+                    <td>String</td>
+                    <td>The search term you entered.</td>
+                </tr>
+                <tr>
+                    <td>isoForms</td>
+                    <td>String</td>
+                    <td>A list of isoforms associated with the gene.</td>
+                </tr>
+                <tr>
+                    <td>url</td>
+                    <td>String</td>
+                    <td>The flybase url from where this info was pulled.</td>
+                </tr>
+                <tr>
+                    <td>sequence</td>
+                    <td>String</td>
+                    <td>The extended gene sequence pulled from Flybase.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>The isoform returned from the query (will return default isoform from flybase is one is not queried).</td>
+                </tr>
+                <tr>
+                    <td>isoFormSequence</td>
+                    <td>String</td>
+                    <td>The full sequence of the isoform returned from the query.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overflow-hidden content-section" id="primer-info">
+            <h2 id="get-characters">PRIMERS</h2>
+            <pre><code class="bash">
+# Here is a curl example
+curl \
+-X POST https://crisprbuilder.com/api/query \
+-F 'key=your_api_key' \
+-F 'type=gene,oligos,primers,primer_efficiency' \
+-F 'gene=pkn,polo' \
+                </code></pre>
+            <p>
+                To interact with our API, you need to make a GET request to the following url :<br>
+                <code class="higlighted">https://crisprbuilder.com/api/query</code>
+            </p>
+            <br>
+            <pre><code class="json">
+Result example :
+
+{
+  query: https://crisprbuilder.com/api?type=search&gene=polo
+  result: {
+    "id":12,
+    "name":"polo",
+    "isoForms":"[\"polo-RA\",\"polo-RB\"]",
+    "url":"https://flybase.org/download/sequence/FBgn0003124/gene_extended",
+    "sequence":"AAACAAAAGAGGCCACACGGCATTAGCGA...",
+    "isoForm":"polo-RA",
+    "time":"2021-09-06 13:42:23",
+    "isoFormSequence":"ATGGCCGCGAAGCCCGAGGATAAG..."
+  }
+}
+                </code></pre>
+            <h4>QUERY PARAMETERS</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>type</td>
+                    <td>String</td>
+                    <td>The type of api call you are making</td>
+                </tr>
+                <tr>
+                    <td>gene</td>
+                    <td>String</td>
+                    <td>A search word to find the gene information.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>(Optional) A search word to find information on a specific isoform by name.</td>
+                </tr>
+                </tbody>
+            </table><br>
+            <h4>RETURN VALUES</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>name</td>
+                    <td>String</td>
+                    <td>The search term you entered.</td>
+                </tr>
+                <tr>
+                    <td>isoForms</td>
+                    <td>String</td>
+                    <td>A list of isoforms associated with the gene.</td>
+                </tr>
+                <tr>
+                    <td>url</td>
+                    <td>String</td>
+                    <td>The flybase url from where this info was pulled.</td>
+                </tr>
+                <tr>
+                    <td>sequence</td>
+                    <td>String</td>
+                    <td>The extended gene sequence pulled from Flybase.</td>
+                </tr>
+                <tr>
+                    <td>isoForm</td>
+                    <td>String</td>
+                    <td>The isoform returned from the query (will return default isoform from flybase is one is not queried).</td>
+                </tr>
+                <tr>
+                    <td>isoFormSequence</td>
+                    <td>String</td>
+                    <td>The full sequence of the isoform returned from the query.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overflow-hidden content-section" id="content-errors">
+            <h2 id="errors">Errors</h2>
+            <p>
+                The Crispr Builder API uses the following error codes:
+            </p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Error Code</th>
+                    <th>Meaning</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>000</td>
+                    <td>
+                        Some parameters are missing. This error appears when you don't pass every mandatory parameters.
+                    </td>
+                </tr>
+                
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="content-code"></div>
+</div>
+<script src="/api-docs/js/script.js"></script>
+</body>
+</html>

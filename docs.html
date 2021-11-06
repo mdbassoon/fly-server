@@ -1,0 +1,86 @@
+<style>
+*{
+  font-family:sans-serif;
+}
+h1 {
+  text-align: center;
+}
+code {
+  background: #cecece;
+  padding:10px 20px;
+  margin: 30px 0px;
+}
+main {
+  padding:0px 40px;
+}
+ul {
+  padding:0px 10px;
+}
+li {
+  margin:4px 0px;
+}
+ul,li{
+  list-style: none;
+}
+</style>
+<main>
+  <br>
+  <br>
+  <br>
+  <h1>CrisprBUILDER Api Docs</h1>
+  <br>
+  <h2>Routes</h2>
+  <br>
+  <h3><code>/</code></h3>
+  <br>
+  <p>The front end for the application.</p>
+  <br>
+  <h3><code>/api</code></h3>
+  <br>
+  <p>Main Access Point for the API.</p>
+  <br>
+  <h3><code>/docs</code></h3>
+  <br>
+  <p>Documentation for API.</p>
+  <br>
+  <hr>
+  <br>
+  <h2>Query Parameters</h2>
+  <br>
+  <h3><code>type</code></h3>
+  <br>
+  <p>The query type</p>
+  <p><b>Parameters:</b>
+    <ul>
+      <li><b>search:</b> search for a gene</li>
+      <li><b>isoform:</b> search for a specific isoform</li>
+      <li><b>targetEfficiency:</b> retrieve efficiency information for a specific target</li>
+      <li><b>oligos:</b> retrieve potential oligos for specific target</li>
+      <li><b>primers:</b> retrieve primers for specific target</li>
+    </ul>
+  </p>
+  <p><b>Example:</b> /api?type=search</p>
+  <br>
+  <br>
+  <h3><code>?type=search</code></h3>
+  <br>
+  <p>Search for a gene by name or id</p>
+  <p><b>Sub Parameters:</b>
+    <ul>
+      <li><b>gene:</b> the gene name</li>
+    </ul>
+  </p>
+  <p><b>Example:</b> /api?type=search&gene=pkn</p>
+  <br>
+  <p><b>Return:</b>
+    <ul>
+      <li><b>name:</b> name of searched gene</li>
+      <li><b>isoForms:</b> a list of isoforms related to this gene</li>
+      <li><b>url:</b> the flybase url where this information can be access directly</li>
+      <li><b>sequence:</b> the extended gene sequence returned from flybase</li>
+    </ul>
+  </p>
+  <br>
+  <br>
+  <br>
+</main>
