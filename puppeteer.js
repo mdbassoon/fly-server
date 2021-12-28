@@ -32,7 +32,7 @@ async function searchForGene(gene,isoFormSearch) {
       }
     }
    
-    let browser = await puppeteer.launch({headless:false,args: [
+    let browser = await puppeteer.launch({headless:true,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -143,7 +143,7 @@ module.exports.getIsoForm = getIsoForm;
 async function searchForTargets(targetArea) {
    console.log('target area: ',targetArea)
     try {
-      let browser = await puppeteer.launch({headless:false,args: [
+      let browser = await puppeteer.launch({headless:true,args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -235,7 +235,7 @@ module.exports.checkTargetEfficiency = checkTargetEfficiency;
 
 async function getOligos(target) {
   try {
-    let browser = await puppeteer.launch({headless:false,args: [
+    let browser = await puppeteer.launch({headless:true,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -276,7 +276,7 @@ async function getPrimers(primerSections) {
   let primers = {};
   const url = 'http://bioinfo.ut.ee/primer3-0.4.0/';
   console.log(primerSections);
-  let browser = await puppeteer.launch({headless:false,args: [
+  let browser = await puppeteer.launch({headless:true,args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
