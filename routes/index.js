@@ -20,8 +20,10 @@ router.get('/', (req, res)=>{
   let response = {'error':'no valid query'}
   if(req.query){/*console.log(req.query);*/}
   if(req.query.type === 'search'){
-    //Get Name
-    response = await puppet.searchForGene(req.query.gene);
+    //Get Name 
+    response = await puppet.searchForGene(req.query.gene,req.query.isoform);
+  } else if(req.query.type === 'isoform'){
+    response = await puppet.getIsoForm(req.query.isoform);
   } else if(req.query.type === 'moreBases') {
     //Get Gene Info with Padding
     // console.log('base url: ',Buffer.from(req.query.url, 'base64').toString('ascii'));
@@ -32,15 +34,15 @@ router.get('/', (req, res)=>{
     response = await nightmare.getGeneInfo(Buffer.from(req.query.url, 'base64').toString('ascii'));
   } else if(req.query.type === 'targetSearch') {
     //Get Possible Target List
-    response = await nightmare.searchForTargets(req.query.targetArea);
+    response = await puppet.searchForTargets(req.query.targetArea);
   } else if(req.query.type === 'targetEfficiency') {
     //Get Efficiency Score for Targets
-    response = await nightmare.checkTargetEfficiency(JSON.parse(Buffer.from(req.query.targets, 'base64').toString('ascii')));
+    response = await puppet.checkTargetEfficiency(req.query.targets);
   } else if(req.query.type === 'oligos') {
-    response = await nightmare.getOligos(req.query.target);
+    response = await puppet.getOligos(req.query.target);
   } else if(req.query.type === 'primers') {
-    // console.log('primer input: ',JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
-    response = await nightmare.getPrimers(JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
+    console.log('primer input: ',JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
+    response = await puppet.getPrimers(JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
   }
   // console.log(response)
   res.json(response);

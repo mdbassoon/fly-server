@@ -2,8 +2,9 @@ const local = require('./.env.js');
 const puppeteer = require('puppeteer');
 const mysql = require('mysql2/promise');
 
-async function searchForGene(gene) {
+async function searchForGene(gene,isoFormSearch) {
   console.log(gene);
+  console.log(isoFormSearch);
   try{
     const pool = await mysql.createPool({
       host: local.dbhost,
@@ -15,20 +16,22 @@ async function searchForGene(gene) {
       connectionLimit: 100,
       queueLimit: 0
     });
-    let testQuery = "SELECT * FROM gene_info WHERE gene_info.name LIKE ?";
-    let today = new Date();
-    let testQueryResults = await pool.execute(testQuery,[
+    let testQuery,testQueryResults;
+    testQuery = "SELECT * FROM gene_info WHERE gene_info.name LIKE ? ";
+    testQueryResults = await pool.execute(testQuery,[
       gene
     ]);
-    //console.log(testQueryResults[0]);
+    let today = new Date();
     if(testQueryResults[0].length>0){
       let lastScraped = testQueryResults[0][0].time;
-      console.log(lastScraped);
-      console.log(' '+(today.getTime() - 86400000))
-      if(lastScraped>(today.getTime() - 86400000)){
+      console.log(testQueryResults[0][0]);
+      console.log(lastScraped); 
+      console.log(' '+(today.getTime() - (7*86400000)))
+      if(lastScraped>(today.getTime() - (7*86400000))){
         return testQueryResults[0][0];
       }
     }
+   
     let browser = await puppeteer.launch({headless:false,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -59,218 +62,275 @@ async function searchForGene(gene) {
     let selected = await page.$eval("#seqSelector", res => res.value);
     let selectedText = await page.$eval("option[value='"+selected+"']", res => res.textContent);
     //console.log(selectedText);
-    let isoForms = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.textContent));
+    let isoForms = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.value));
+    let isoFormNames = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.textContent));
+    let isoFormInfo = {};
+   
+    for(let i=0;i<isoForms.length;i++){
+      await page.select('#seqSelector',isoForms[i]);
+      let isoFormName = isoFormNames[i];
+      let isoFormGene = await page.$eval('.fastaSeq',res=>res.textContent);
+      isoFormInfo[isoFormNames[i]] = isoFormGene;
+    }
     let isoFormSequence = await page.$eval('.fastaSeq',res=>res.textContent);
-    //console.log(geneSequence);
+    let geneID = await page.$eval('input[name="ids"]', res => res.value);
+    //console.log(geneSymbol);
     let url = await page.url();
     let info = {
       'res':true,
       'url':url,
       'isoForm':selectedText,
-      'isoForms':isoForms,
+      'isoForms':JSON.stringify(isoFormNames),
       'sequence':geneSequence.replace(/\s/g,''),
       'isoFormSequence':isoFormSequence.replace(/\s/g,''),
+      'geneId':geneID,
+      'name':gene
     }
     browser.close();
-    let insertQuery = "insert into gene_info (name,isoForm,isoFormSequence,isoForms,url,sequence,time) VALUES (?,?,?,?,?,?,?)";
-    
-    await pool.execute(insertQuery,[
-      gene,
-      selectedText,
-      isoFormSequence.replace(/\s/g,''),
-      isoForms,
-      url,
-      geneSequence.replace(/\s/g,''),
-      today.getTime()
-    ]); 
-    //console.log(testQuery);
+    let insertQuery = "insert into gene_info (name,isoForm,isoFormSequence,isoForms,url,sequence,time,geneId) VALUES (?,?,?,?,?,?,?,?)";
+    let isoKeys = Object.keys(isoFormInfo);
+    for(let i=0;i<isoKeys.length;i++){
+      await pool.execute(insertQuery,[
+        gene,
+        isoKeys[i],
+        isoFormInfo[isoKeys[i]].replace(/\s/g,''),
+        JSON.stringify(isoFormNames),
+        url,
+        geneSequence.replace(/\s/g,''),
+        today.getTime(),
+        geneID
+      ]); 
+    }
+
     return info;
+    
+  } catch(e){
+    console.log(e);
+    return 'error';
+  }
+}
+module.exports.searchForGene = searchForGene;
+
+async function getIsoForm(isoForm) {
+  console.log(isoForm);
+  try{
+    const pool = await mysql.createPool({
+      host: local.dbhost,
+      port:local.dbport,
+      user: local.dbuser,
+      password: local.dbpassword,
+      database: local.database,
+      waitForConnections: true,
+      connectionLimit: 100,
+      queueLimit: 0
+    });
+    let testQuery,testQueryResults;
+    
+    testQuery = "SELECT * FROM gene_info WHERE gene_info.isoForm LIKE ? ";
+    testQueryResults = await pool.execute(testQuery,[
+      isoForm
+    ]);
+    console.log(testQueryResults[0][0]);
+    return testQueryResults[0][0];
     
   } catch(e){
     console.log(e);
   }
 }
-module.exports.searchForGene = searchForGene;
-
+module.exports.getIsoForm = getIsoForm;
 
 
 async function searchForTargets(targetArea) {
-  // console.log('target area: ',targetArea)
+   console.log('target area: ',targetArea)
     try {
-      var xvfb = new Xvfb();
-      xvfb.startSync();
-      const url = 'http://targetfinder.flycrispr.neuro.brown.edu/';
-      let nightmare = Nightmare({show: false});
-      let error = false;
-      let res = await nightmare.goto(url)
-      .wait('select[name="genomeSelect"]')
-      .select('select[name="genomeSelect"]', 'Dmelvc9')
-      .insert('#gDNA-form', targetArea)
-      .click('button[name="routingVar"]')
-      .wait('#CRISPRinput')
-      .evaluate(()=>{ 
-        const input = document.getElementById('CRISPRinput');
-        const targets = input.innerHTML.toString().split('\n');
-        if(targets.length>99) {
-          input.innerHTML = targets.slice(0,99).join('\n');
-        }
-      })
-      .click('button[name="routingVar"]')
-      .wait('.result')
-      .end()
-      .evaluate(()=>{
-        const results = document.getElementsByClassName('result');
-        let resultsArr = [];
-        for(let i=0;i<results.length;i++){
-          let resultObj = {};
-          if(results[i].getElementsByClassName('label-important-custom').length===0){
-            resultObj['offTarget'] = results[i].getElementsByClassName('label')[0].innerText[0];
-            resultObj['distal'] = results[i].getElementsByClassName('distal')[0].innerText;
-            resultObj['proximal'] = results[i].getElementsByClassName('proximal')[0].innerText;
-            resultObj['pam'] = results[i].getElementsByClassName('pam')[0].innerText;
-            resultObj['strand'] = results[i].getElementsByTagName('td')[1].innerText;
-            resultObj['label'] = results[i].getElementsByClassName('target-label')[0].innerText;
-            resultsArr.push(resultObj);
-          } else {error = true;}
-        }
-        return resultsArr;
-      });  
-      // console.log('res: ',res);
-      xvfb.stopSync();
-      if(!Array.isArray(res) || !res.length || error) {
-        return {'error':'No Targets Found'};
-      } else {
-        if(res.length>0) {
-          return res;
-        } else {
-          return {'error':'No Targets Found'};
-        }
+      let browser = await puppeteer.launch({headless:false,args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process', // <- this one doesn't works in Windows
+        '--disable-gpu'
+      ]});
+      
+      let page = await browser.newPage();
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
+      await page.goto('http://targetfinder.flycrispr.neuro.brown.edu/');
+      
+      await page.select('select[name="genomeSelect"]', 'Dmelvc9');
+      await page.type('#gDNA-form',targetArea);
+      await page.click('button[name="routingVar"]');
+      await page.waitForSelector('button[name="routingVar"]');
+      await page.click('button[name="routingVar"]');
+      await page.waitForSelector('.result');
+
+      let isoForms = await page.$$eval('.result',elements=> elements.map(item=>item.textContent));
+      
+      let offTargets = await page.$$eval('.result .label-info-custom',elements=> elements.map(item=>item.innerText));
+      let distals = await page.$$eval('.result .distal',elements=> elements.map(item=>item.innerText));
+      let proximals = await page.$$eval('.result .proximal',elements=> elements.map(item=>item.innerText));
+      let pams = await page.$$eval('.result .pam',elements=> elements.map(item=>item.innerText));
+      let strands = await page.$$eval('.result td:nth-of-type(2)',elements=> elements.map(item=>item.innerText));
+      let labels = await page.$$eval('.result .target-label',elements=> elements.map(item=>item.innerText));
+      browser.close();
+      let results = [];
+      let targets = [];
+      for(let i=0;i< isoForms.length;i++){
+        results.push({
+          'offtarget':offTargets[i].split(' ')[0],
+          'distal':distals[i],
+          'proximal':proximals[i],
+          'pam':pams[i],
+          'strand':strands[i],
+          'label':labels[i]
+        });
+        targets.push(proximals[i]+distals[i]);
       }
-    } catch(error){
-      return error;
-    }
+      console.log(results);
+      return {
+        'results':results,
+        'targets':encodeURIComponent(targets.join('\n'))
+      }
+  }catch(e){
+    console.log(e);
+  }
 }
+module.exports.searchForTargets = searchForTargets;
+
 async function checkTargetEfficiency(targets) {
-  const url = 'http://www.flyrnai.org/evaluateCrispr/'
+  console.log('targets',targets);
   try {
-    var xvfb = new Xvfb();
-    xvfb.startSync();
-    let nightmare = Nightmare({show:false});
-    const fullSearchString = targets.map((target)=>{
-      const proximal = target.proximal;
-      const distal = target.distal;
-      const pam = target.pam;
-      return proximal+distal;
-    }).join('\n');
-    let scores = await nightmare.goto(url)
-    .insert('#textAreaInput', fullSearchString)
-    .click('input[value="Display Results"]')
-    .wait('#dataTable')
-    .end()
-    .evaluate(()=>{
-      const rows = document.getElementById('dataTable').children[1].children;
-      let scores = [];
-      for(let i=0;i<rows.length;i++){
-        const score = rows[i].children[8].innerText;
-        scores.push(score)
-      }
-      return scores;
-    });
-    xvfb.stopSync();
-    if(!Array.isArray(scores) || !scores.length){
-      return {'error':'scores not found'}
-    } else {
-      for(let i=0;i<targets.length;i++){
-        targets[i]['score'] = scores[i];
-      }
-      return targets;
+    let browser = await puppeteer.launch({headless:true,args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process', // <- this one doesn't works in Windows
+      '--disable-gpu'
+    ]});
+    
+    let page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
+    await page.goto('http://www.flyrnai.org/evaluateCrispr/');
+    await page.type('#textAreaInput',targets);
+    await page.click('input[value="Display Results"]');
+    await page.waitForSelector('#dataTable');
+    let targetList = await page.$$eval('#dataTable tr td:nth-of-type(2)',elements=> elements.map(item=>item.innerText));
+    let scores = await page.$$eval('#dataTable tr td:nth-of-type(9)',elements=> elements.map(item=>item.innerText));
+    let results = {};
+    browser.close();
+    for(let i=0;i<targetList.length;i++){
+      results[targetList[i]] = scores[i];
     }
+    console.log(results);
+    return results;
   } catch(error) {
     return error;
   }
 }
+module.exports.checkTargetEfficiency = checkTargetEfficiency;
+
 async function getOligos(target) {
   try {
-    var xvfb = new Xvfb();
-    xvfb.startSync();
-    const thisTarget = target.toString();
-    let nightmare = Nightmare({show: false});
-    const url = 'http://targetfinder.flycrispr.neuro.brown.edu/';
-    let res = await nightmare.goto(url)
-    .wait('select[name="genomeSelect"]')
-    .select('select[name="genomeSelect"]', 'Dmelvc9')
-    .wait('#gDNA-form')
-    .insert('#gDNA-form', thisTarget)
-    .click('button[name="routingVar"]')
-    .wait('#CRISPRinput')
-    .evaluate((thisTarget)=>{ 
-      document.getElementById('CRISPRinput').innerHTML = thisTarget;
-    }, thisTarget)
-    .click('button[name="routingVar"]')
-    .wait('.target-checkbox')
-    .click('.target-checkbox')
-    .wait('button[name="routingVar"]')
-    .click('button[name="routingVar"]')
-    .wait('.oligo-order')
-    .end()  
-    .evaluate(()=>{
-      const oligos = document.getElementsByClassName('oligo-order')[0].children;
-      let oligoText = [];
-      for(let i=0;i<oligos.length;i++) {
-        oligoText.push(oligos[i].innerText);
-      }
-      return oligoText; 
-    });  
-    xvfb.stopSync();
-    if(!Array.isArray(res) || !res.length) {
-      return {error:'error'}
-    } else {
-      return res;
-    }
+    let browser = await puppeteer.launch({headless:false,args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process', // <- this one doesn't works in Windows
+      '--disable-gpu'
+    ]});
+    
+    let page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
+    await page.goto('http://targetfinder.flycrispr.neuro.brown.edu/');
+    await page.select('select[name="genomeSelect"]', 'Dmelvc9');
+    await page.type('#gDNA-form',target);
+    await page.click('button[name="routingVar"]');
+    await page.waitForSelector('button[name="routingVar"]');
+    await page.click('button[name="routingVar"]');
+    await page.waitForSelector('.target-checkbox');
+    await page.click('.target-checkbox');
+    await page.click('button[name="routingVar"]');
+    await page.waitForSelector('.oligo-order');
+    let oligos = await page.$eval('.oligo-order',res=>res.innerText);
+    let senseText = oligos.split('\n')[0].split('Sense oligo: ')[1];
+    let antisenseText = oligos.split('\n')[1].split('Antisense oligo: ')[1];
+    browser.close();
+    return {
+      'sense':senseText,
+      'antisense':antisenseText
+    };
   } catch(error) {
    return error;
   }
 }
+module.exports.getOligos = getOligos;
+
 async function getPrimers(primerSections) {
   let primers = {};
   const url = 'http://bioinfo.ut.ee/primer3-0.4.0/';
+  console.log(primerSections);
+  let browser = await puppeteer.launch({headless:false,args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-first-run',
+    '--no-zygote',
+    '--single-process', // <- this one doesn't works in Windows
+    '--disable-gpu'
+  ]});
   for(let i=0;i<4;i++){
-    var xvfb = new Xvfb();
-    xvfb.startSync();
     let currentPrimer = !primers['hom5']?"5' Homology":!primers['seq5']?"5' Sequence":!primers['seq3']?"3' Sequence":"3' Homology";
     let primerSection = primerSections[currentPrimer];
     let primerSide = currentPrimer==="3' Homology"?'input[name="MUST_XLATE_PICK_LEFT"]':currentPrimer==="3' Sequence"?'input[name="MUST_XLATE_PICK_LEFT"]':'input[name="MUST_XLATE_PICK_RIGHT"]';
+    console.log(primerSection);
     try {
-      let nightmare = Nightmare({show: false});
-      let res = await nightmare.goto(url)
-      .wait('textarea[name="SEQUENCE"]')
-      .insert('textarea[name="SEQUENCE"]', primerSection)
-      .click(primerSide)
-      .click('input[name="Pick Primers"]')
-      .wait('a[href="/primer3-0.4.0/primer3_www_results_help.html#PRIMER_OLIGO_SEQ"]')
-      .end()
-      .evaluate(()=>{
-        const primers = document.querySelector('a[href="/primer3-0.4.0/primer3_www_results_help.html#PRIMER_OLIGO_SEQ"]').parentElement.innerText;
-        return primers;
-      });  
-      xvfb.stopSync();
+     
+      
+      let page = await browser.newPage();
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
+      await page.goto(url);
+      
+      /*await page.select('select[name="genomeSelect"]', 'Dmelvc9');
+      await page.type('#gDNA-form',target);
+      await page.click('button[name="routingVar"]');
+      await page.waitForSelector('button[name="routingVar"]');
+      await page.click('button[name="routingVar"]');
+      await page.waitForSelector('.target-checkbox');
+      await page.click('.target-checkbox');
+      await page.click('button[name="routingVar"]');
+      await page.waitForSelector('.oligo-order');*/
+      await page.waitForSelector('textarea[name="SEQUENCE"]')
+      await page.type('textarea[name="SEQUENCE"]', primerSection);
+      await page.click(primerSide);
+      await page.click('input[name="Pick Primers"]')
+      await page.waitForSelector('a[href="/primer3-0.4.0/primer3_www_results_help.html#PRIMER_OLIGO_SEQ"]');
+      let primersText = await page.$eval('pre:first-of-type',res=>res.innerText);
+      console.log(primersText);
       let primerStart = [];
       let stop = 0;
       let finalStop = 0;
-      for(let i=0;i<res.length;i++) {
-        if(res.slice(i,i+6)==='PRIMER'){
+      for(let i=0;i<primersText.length;i++) {
+        if(primersText.slice(i,i+6)==='PRIMER'){
           primerStart.push(i);
-        } else if(res.slice(i,i+13)==='SEQUENCE SIZE') {
+        } else if(primersText.slice(i,i+13)==='SEQUENCE SIZE') {
           stop = i;
-        } else if(res.slice(i,i+10)==='Statistics') {
+        } else if(primersText.slice(i,i+10)==='Statistics') {
           finalStop = i;
         }
       }
 
-      const firstPrimer = res.slice(primerStart[0],stop).replace(/[\n\r]/g,'').split(' ').filter((el)=>{return el != ''});
+      const firstPrimer = primersText.slice(primerStart[0],stop).replace(/[\n\r]/g,'').split(' ').filter((el)=>{return el != ''});
       let allPrimers = [firstPrimer];
       for(let i=1;i<primerStart.length;i++){
-        const primer = res.slice(primerStart[i],!primerStart[i+1]?finalStop:primerStart[i+1]).replace(/[\n\r]/g,'').split(' ').filter((el)=>{return el != ''});
+        const primer = primersText.slice(primerStart[i],!primerStart[i+1]?finalStop:primerStart[i+1]).replace(/[\n\r]/g,'').split(' ').filter((el)=>{return el != ''});
         allPrimers.push(primer);
       }
       if(currentPrimer==="5' Homology"){
@@ -287,5 +347,7 @@ async function getPrimers(primerSections) {
       return error;
     }
   }
+  browser.close();
   return primers;
 }
+module.exports.getPrimers = getPrimers;
