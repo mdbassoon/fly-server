@@ -32,7 +32,7 @@ async function searchForGene(gene,isoFormSearch) {
       }
     }
    
-    let browser = await puppeteer.launch({headless:true,args: [
+    let browser = await puppeteer.launch({headless:false,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -143,7 +143,7 @@ module.exports.getIsoForm = getIsoForm;
 async function searchForTargets(targetArea) {
    console.log('target area: ',targetArea)
     try {
-      let browser = await puppeteer.launch({headless:true,args: [
+      let browser = await puppeteer.launch({headless:false,args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -156,6 +156,7 @@ async function searchForTargets(targetArea) {
       
       let page = await browser.newPage();
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
+      await page.setDefaultTimeout(0); 
       await page.goto('http://targetfinder.flycrispr.neuro.brown.edu/');
       
       await page.select('select[name="genomeSelect"]', 'Dmelvc9');
@@ -163,22 +164,32 @@ async function searchForTargets(targetArea) {
       await page.click('button[name="routingVar"]');
       await page.waitForSelector('button[name="routingVar"]');
       await page.click('button[name="routingVar"]');
-      await page.waitForSelector('.result');
+      await page.waitForSelector('.result',{timout:0});
 
       let isoForms = await page.$$eval('.result',elements=> elements.map(item=>item.textContent));
       
-      let offTargets = await page.$$eval('.result .label-info-custom',elements=> elements.map(item=>item.innerText));
-      let distals = await page.$$eval('.result .distal',elements=> elements.map(item=>item.innerText));
-      let proximals = await page.$$eval('.result .proximal',elements=> elements.map(item=>item.innerText));
-      let pams = await page.$$eval('.result .pam',elements=> elements.map(item=>item.innerText));
-      let strands = await page.$$eval('.result td:nth-of-type(2)',elements=> elements.map(item=>item.innerText));
+      let offTargets = await page.$$eval('.result > span:nth-of-type(2)',elements=> elements.map(item=>{
+        if(!item.innerText.includes('Exact')){
+          return item.innerText;
+        }}));
+      console.log('offtargets',offTargets);
+      let distals = await page.$$eval('.result tbody tr:nth-of-type(1) .distal',elements=> elements.map(item=>item.innerText));
+      let proximals = await page.$$eval('.result tbody tr:nth-of-type(1) .proximal',elements=> elements.map(item=>item.innerText));
+      let pams = await page.$$eval('.result tbody tr:nth-of-type(1) .pam',elements=> elements.map(item=>item.innerText));
+      let strands = await page.$$eval('.result tbody tr:nth-of-type(1) td:nth-of-type(2)',elements=> elements.map(item=>item.innerText));
       let labels = await page.$$eval('.result .target-label',elements=> elements.map(item=>item.innerText));
       browser.close();
       let results = [];
       let targets = [];
       for(let i=0;i< isoForms.length;i++){
+        if(offTargets[i]==null){
+          offTargets.splice(i,1);
+          console.log(offTargets);
+        }
+        console.log(offTargets[i]);
+        let offTarget = !offTargets[i]?null:offTargets[i].split(' ')[0];
         results.push({
-          'offtarget':offTargets[i].split(' ')[0],
+          'offtarget':offTarget,
           'distal':distals[i],
           'proximal':proximals[i],
           'pam':pams[i],
@@ -201,7 +212,7 @@ module.exports.searchForTargets = searchForTargets;
 async function checkTargetEfficiency(targets) {
   console.log('targets',targets);
   try {
-    let browser = await puppeteer.launch({headless:true,args: [
+    let browser = await puppeteer.launch({headless:false,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -235,7 +246,7 @@ module.exports.checkTargetEfficiency = checkTargetEfficiency;
 
 async function getOligos(target) {
   try {
-    let browser = await puppeteer.launch({headless:true,args: [
+    let browser = await puppeteer.launch({headless:false,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -276,7 +287,7 @@ async function getPrimers(primerSections) {
   let primers = {};
   const url = 'http://bioinfo.ut.ee/primer3-0.4.0/';
   console.log(primerSections);
-  let browser = await puppeteer.launch({headless:true,args: [
+  let browser = await puppeteer.launch({headless:false,args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
