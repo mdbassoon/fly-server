@@ -220,7 +220,7 @@ ORIGIN
      5341 gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg
      5401 gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg
      5461 gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg
-     5521 gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggg**arm_2_start**ctcga
+     5521 gggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggg**arm_2_end**ctcga
      5581 gGCTCTTCCG TCAATCGAGT TCAAGGGCGA CACAAAATTT ATTCTAAATG CATAATAAAT
      5641 ACTGATAACA TCTTATAGTT TGTATTATAT TTTGTATTAT CGTTGACATG TATAATTTTG
      5701 ATATCAAAAA CTGATTTTCC CTTTATTATT TTCGAGATTT ATTTTCTTAA TTCTCTTTAA
