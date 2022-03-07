@@ -39,6 +39,7 @@ router.get('/', (req, res)=>{
     //Get Efficiency Score for Targets
     response = await puppet.checkTargetEfficiency(req.query.targets);
   } else if(req.query.type === 'oligos') {
+    console.log('oligo search');
     response = await puppet.getOligos(req.query.target);
   } else if(req.query.type === 'primers') {
     console.log('primer input: ',JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
