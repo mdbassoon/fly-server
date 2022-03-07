@@ -247,7 +247,7 @@ module.exports.checkTargetEfficiency = checkTargetEfficiency;
 async function getOligos(target) {
   console.log(target);
   try {
-    let browser = await puppeteer.launch({headless:false111111111111111111111111111111111111,args: [
+    let browser = await puppeteer.launch({headless:true,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
