@@ -178,7 +178,7 @@ async function searchForTargets(targetArea) {
       let pams = await page.$$eval('.result tbody tr:nth-of-type(1) .pam',elements=> elements.map(item=>item.innerText));
       let strands = await page.$$eval('.result tbody tr:nth-of-type(1) td:nth-of-type(2)',elements=> elements.map(item=>item.innerText));
       let labels = await page.$$eval('.result .target-label',elements=> elements.map(item=>item.innerText));
-      /*browser.close();
+      browser.close();
       let results = [];
       let targets = [];
       for(let i=0;i< isoForms.length;i++){
@@ -202,7 +202,7 @@ async function searchForTargets(targetArea) {
       return {
         'results':results,
         'targets':encodeURIComponent(targets.join('\n'))
-      }*/
+      }
   }catch(e){
     console.log(e);
   }
@@ -247,7 +247,7 @@ module.exports.checkTargetEfficiency = checkTargetEfficiency;
 async function getOligos(target) {
   console.log(target);
   try {
-    let browser = await puppeteer.launch({headless:true,args: [
+    let browser = await puppeteer.launch({headless:false,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -263,7 +263,7 @@ async function getOligos(target) {
     await page.goto('http://targetfinder.flycrispr.neuro.brown.edu/');
     await page.select('select[name="genomeSelect"]', 'Dmelvc9');
     await page.type('#gDNA-form',target);
-    /*await page.click('button[name="routingVar"]');
+    await page.click('button[name="routingVar"]');
     await page.waitForSelector('button[name="routingVar"]');
     await page.click('button[name="routingVar"]');
     await page.waitForSelector('.target-checkbox');
@@ -277,7 +277,7 @@ async function getOligos(target) {
     return {
       'sense':senseText,
       'antisense':antisenseText
-    };*/
+    };
   } catch(error) {
    return error;
   }
