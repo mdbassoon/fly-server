@@ -143,7 +143,7 @@ module.exports.getIsoForm = getIsoForm;
 async function searchForTargets(targetArea) {
    console.log('target area: ',targetArea)
     try {
-      let browser = await puppeteer.launch({headless:false,args: [
+      let browser = await puppeteer.launch({headless:true,args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -247,7 +247,7 @@ module.exports.checkTargetEfficiency = checkTargetEfficiency;
 async function getOligos(target) {
   console.log(target);
   try {
-    let browser = await puppeteer.launch({headless:false,args: [
+    let browser = await puppeteer.launch({headless:true,args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
