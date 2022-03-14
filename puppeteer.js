@@ -288,7 +288,7 @@ async function getPrimers(primerSections) {
   let primers = {};
   const url = 'https://bioinfo.ut.ee/primer3-0.4.0/';
   console.log(primerSections);
-  let browser = await puppeteer.launch({headless:false,args: [
+  let browser = await puppeteer.launch({headless:true,args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
