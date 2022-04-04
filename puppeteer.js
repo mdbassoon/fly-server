@@ -59,19 +59,28 @@ async function searchForGene(gene,isoFormSearch) {
     [...document.querySelectorAll('form button')].find(element => element.textContent === 'View Sequence').click();
     });
     await page.waitForSelector('.fastaSeq');
-    let selected = await page.$eval("#seqSelector", res => res.value);
-    let selectedText = await page.$eval("option[value='"+selected+"']", res => res.textContent);
-    //console.log(selectedText);
-    let isoForms = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.value));
-    let isoFormNames = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.textContent));
+    let selectedText = null;
+    let isoFormNames = null;
     let isoFormInfo = {};
-   
-    for(let i=0;i<isoForms.length;i++){
-      await page.select('#seqSelector',isoForms[i]);
-      let isoFormName = isoFormNames[i];
-      let isoFormGene = await page.$eval('.fastaSeq',res=>res.textContent);
-      isoFormInfo[isoFormNames[i]] = isoFormGene;
+    try{
+      let selected = await page.$eval("#seqSelector", res => res.value);
+      selectedText = await page.$eval("option[value='"+selected+"']", res => res.textContent);
+      //console.log(selectedText);
+    
+      let isoForms = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.value));
+      isoFormNames = await page.$$eval('#seqSelector option',elements=> elements.map(item=>item.textContent));
+      
+      console.log('iso options',isoForms);
+      for(let i=0;i<isoForms.length;i++){
+        await page.select('#seqSelector',isoForms[i]);
+        let isoFormName = isoFormNames[i];
+        let isoFormGene = await page.$eval('.fastaSeq',res=>res.textContent);
+        isoFormInfo[isoFormNames[i]] = isoFormGene;
+      }
+    } catch(e){
+      console.log('no isoforms');
     }
+
     let isoFormSequence = await page.$eval('.fastaSeq',res=>res.textContent);
     let geneID = await page.$eval('input[name="ids"]', res => res.value);
     //console.log(geneSymbol);
