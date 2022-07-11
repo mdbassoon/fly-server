@@ -47,6 +47,8 @@ async function searchForGene(gene,isoFormSearch) {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36');
     await page.goto('https://flybase.org/');
     console.log(gene);
+    const data = await page.evaluate(() => document.querySelector('*').outerHTML);
+    console.log(data);
     await page.waitForFunction('document.querySelector("body")');
     await page.type('#GeneSearch',gene);
     await Promise.all([page.$eval('#j2g_search_form',form=>form.submit()),page.waitForNavigation()]);
