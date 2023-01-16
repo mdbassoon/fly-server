@@ -52,7 +52,7 @@ async function getIdFromSearch(searchTerm){
     } else {
         let geneInfo = await getGeneticInfoFromId(result[0].primary_FBid);
         if(geneInfo){
-            response = {results:{id:result[0].primary_FBid,isoforms:geneInfo}};
+            response = {results:{name:searchTerm,id:result[0].primary_FBid,isoforms:geneInfo}};
         }
     }
 
