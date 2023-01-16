@@ -16,7 +16,7 @@
     "mysql2": "^2.3.0",
     "mysql2-promise": "^0.1.4",
     "nightmare": "^3.0.1",
-    "puppeteer": "^10.2.0",
+    "puppeteer": "^19.5.2",
     "tsv-json": "^2.0.0",
     "xvfb": "^0.4.0"
   },
