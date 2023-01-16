@@ -5,33 +5,29 @@ var path = require('path');
 var app = express();
 var nightmare = require('../nightmareTools.js');
 var puppet = require('../puppeteer.js');
+var flyApi = require('../api.js');
 /* GET home page. */
 router.get('/', (req, res)=>{
   res.sendFile(path.join(__dirname, '../public/build', 'index.html'));
 })
 .get('/api', async (req,res)=>{
   req.socket.setTimeout(3600e3);
+  console.log('query',req.query);
   if(req.query&&req.query.type==='new'){
     res.json(['you did it']);
     res.end();
     return null;
   }
   res.header("Access-Control-Allow-Origin", "*");
-  let response = {'error':'no valid query'}
-  if(req.query){/*console.log(req.query);*/}
+  let response = {'error':'no valid query'};
+
+  if(req.query){console.log(req.query.type);}
   if(req.query.type === 'search'){
     //Get Name 
-    response = await puppet.searchForGene(req.query.gene,req.query.isoform);
+    response = await flyApi.getIdFromSearch(req.query.gene);
+    console.log('res',response);
   } else if(req.query.type === 'isoform'){
-    response = await puppet.getIsoForm(req.query.isoform);
-  } else if(req.query.type === 'moreBases') {
-    //Get Gene Info with Padding
-    // console.log('base url: ',Buffer.from(req.query.url, 'base64').toString('ascii'));
-    response = await nightmare.getMoreBases(Buffer.from(req.query.url, 'base64').toString('ascii'));
-  } else if(req.query.type === 'geneInfo') {
-    //Get Gene Info
-    // console.log('base url: ',Buffer.from(req.query.url, 'base64').toString('ascii'));
-    response = await nightmare.getGeneInfo(Buffer.from(req.query.url, 'base64').toString('ascii'));
+    response = await flyApi.getIsoFormSequence(req.query.isoform);
   } else if(req.query.type === 'targetSearch') {
     //Get Possible Target List
     response = await puppet.searchForTargets(req.query.targetArea);
@@ -45,7 +41,7 @@ router.get('/', (req, res)=>{
     console.log('primer input: ',JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
     response = await puppet.getPrimers(JSON.parse(Buffer.from(req.query.primerSections, 'base64').toString('ascii')));
   }
-  // console.log(response)
+  console.log('response: ',response)
   res.json(response);
   res.end();
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
