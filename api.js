@@ -1,6 +1,7 @@
 const fs = require('fs');
 const mysql = require('mysql2/promise');
 const local = require('./.env.js');
+const fetch =  require("node-fetch");
 
 async function getIdFromSearch(searchTerm){
     const pool = await mysql.createPool({
