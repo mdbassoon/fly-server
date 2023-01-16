@@ -48,7 +48,7 @@ async function getIdFromSearch(searchTerm){
     console.log('in database ',idQueryResults[0]);
 
     if(idQueryResults[0].length!=0){
-        response = {results:idQueryResults[0][0]};
+        response = {results:{name:searchTerm,id:result[0].primary_FBid,isoforms:idQueryResults[0][0]}};
     } else {
         let geneInfo = await getGeneticInfoFromId(result[0].primary_FBid);
         if(geneInfo){
