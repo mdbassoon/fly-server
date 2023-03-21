@@ -94,9 +94,9 @@ async function getGeneticInfoFromId(id){
         let locStart = locInfo.split('join(')[1].split('..')[0];
         let locEnd = locInfo.split('..').slice(-1)[0];
         console.log(name,'\n',locStrand,'\n',locDes,'\n',locStart,'\n',locEnd);
-        let geneQuery = "INSERT INTO gene_info(isoForm,sequence,geneId,strand,locStart,locEnd,locDesc,upstream,downstream) values(?,?,?,?,?,?,?,'','')";
+        let geneQuery = "INSERT INTO gene_info(isoForm,geneId,strand,locStart,locEnd,locDesc,upstream,downstream,sequence) values(?,?,?,?,?,?,'','','')";
         await pool.execute(geneQuery,[
-        name,result.sequence,result.id,locStrand,locStart,locEnd,locDes
+        name,result.id,locStrand,locStart,locEnd,locDes
         ]);
     });
     return JSON.stringify(isoForms);
@@ -126,16 +126,17 @@ async function getIsoFormSequence(isoForm){
         let location = geneInfo.locDesc+':'+geneInfo.locStart+'..'+geneInfo.locEnd;
         let strand = geneInfo.strand=="-"?'minus':'plus';
         let url = "https://api.flybase.org/api/v1.0/sequence/region/dmel/"+location+"?strand="+strand+"&padding=2000";
-        //console.log(url);
+        console.log(url);
         let response = await fetch(url)
         let data = await response.json();
-        //console.log(data.resultset.result);
+        console.log(data.resultset.result);
         let sequence = data.resultset.result[0].sequence;
         let upstream = sequence.substring(0,2000);
         let downstream = sequence.substring(sequence.length-2000);
-        let paddingQueryStr = "UPDATE gene_info SET upstream = ?, downstream = ? WHERE isoForm = ?";
+        let trimSequence = sequence.substring(2000,sequence.length-2000);
+        let paddingQueryStr = "UPDATE gene_info SET upstream = ?, sequence = ?, downstream = ? WHERE isoForm = ?";
         await pool.query(paddingQueryStr,[
-            upstream.toString(),downstream.toString(),isoForm.toString()
+            upstream.toString(),trimSequence.toString(),downstream.toString(),isoForm.toString()
         ]);
         let mainQueryStr = "SELECT * FROM gene_info WHERE isoForm = ?";
         let mainQuery = await pool.query(mainQueryStr,[
